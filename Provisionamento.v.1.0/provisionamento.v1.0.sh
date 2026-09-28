@@ -1,32 +1,25 @@
 #! /bin/bash
 
-
-################FUNÇÕES#############################
-
-
-#-------------------APPS-----------------------#
-
-#função p/ instalar apache
+##packages
 inst_apache() {
 	apt install apache2 -y
 	systemctl enable apache2
-	echo "sistema apache instalado com sucesso, verifique seu ip: $(hostname -I)"
+	echo "Apache OK, ip: $(hostname -I)"
 }
 
-#função para instalar o mysql
 inst_mysql() {
 	apt install mysql-server-8.0 -y
-	echo "MySQL instalado"
+	echo "MySQL OK"
 }
 
-#--------------------GRUPOS---------------------#
 
+##grp creating
 grp_adm(){
 	mkdir -p /adm
 	groupadd GRP_ADM
 	chmod 770 /adm
 	chown root:GRP_ADM /adm
-	echo "Grupo ADM criado"
+	echo "ADM OK"
 }
 
 grp_sec(){
@@ -34,100 +27,102 @@ grp_sec(){
 	groupadd GRP_SEC
 	chmod 770 /sec
 	chown root:GRP_SEC /sec
-	echo "Grupo SEC criado"
+	echo "SEC OK"
 }
 
-grp_ven(){
-	mkdir -p /ven
-	groupadd GRP_VEN
-	chmod 770 /ven
-	chown root:GRP_VEN /ven
-	echo "Grupo VEN criado"
+grp_sal(){
+	mkdir -p /sal
+	groupadd GRP_SAL
+	chmod 770 /sal
+	chown root:GRP_SAL /sal
+	echo "SAL OK"
 }
 
-grp_cont(){
-	mkdir -p /cont
-	groupadd GRP_CONT
-	chmod 770 /cont
-	chown root:GRP_CONT /cont
-	echo "Grupo CONT criado"
+grp_acc(){
+	mkdir -p /acc
+	groupadd GRP_ACC
+	chmod 770 /acc
+	chown root:GRP_ACC /acc
+	echo "ACC OK"
 }
 
-#----------------USUARIOS|Beta-------------#
 
+##User
 add_user(){
 	useradd "$1" -m -G "GRP_$2" -s /bin/bash
-	echo "Usuário $1 adicionado ao grupo GRP_$2 "
+	echo "User $1 added in the group GRP_$2 "
 }
 
 
-#-----------MENUS (GRUPOS)-------------#
 
+##Menus
 menu_grp(){
-echo "Selecione a pasta a ser criada"
-select opt in "Administrativo" "Segurança" "Vendas" "Contabilidade" "Finalizar" ; do
+echo "Select the directory to be created:"
+select opt in "Administrative" "Security" "Sales" "Accounting" "Finish" ; do
 	case $opt in
-  	 "Administrativo") grp_adm ;  menu_grp ;;
-	 "Segurança") grp_sec ; menu_grp ;;
-         "Vendas") grp_ven ; menu_grp ;;
-         "Contabilidade") grp_cont ; menu_grp ;;
-	 "Finalizar") break ;;
-  	 *) echo "opção invalida" ;;
+  	 "Administrative") grp_adm ;  menu_grp ;;
+	 "Security") grp_sec ; menu_grp ;;
+         "Sales") grp_sal ; menu_grp ;;
+         "Accounting") grp_acc ; menu_grp ;;
+	 "Finish") break ;;
+  	 *) echo "Invalid Option" ;;
 	 esac
 	break
 done
 }
 
 
-#------------Menu Sistemas----------#
 menu_app1(){
-echo "Selecione o sistema para ser adicionado: "
+echo "Select the system to be added: "
 select opt in "Apache" "MySql" "Done" ; do
 	case $opt in
 	"Apache") inst_apache ; menu_app1 ;;
 	"MySql") inst_mysql ; menu app_1 ;;
 	"Done") break ;;
-	*  ) echo "opção invalida"
+	*  ) echo "Invalid option"
 	esac
 	break
 done
 }
-#-----------Menu Usuários------------#
+
 
 menu_user(){
-	echo "---Cadastro de usuários---"
+	echo "---Register user--"
 
 	##nome do usuario
-	read -p "Digite o nome de usuário:  " username
+	read -p "Name:  " username
 	#selecionar grupo
-	echo "selecione o Grupo:"
-   	  select grupo in "ADM" "VEN" "SEC" "CONT" "Cancelar" ;do
+	echo "Group:"
+   	  select grupo in "ADM" "SAL" "SEC" "ACC" "CANCEL" ;do
 		case $grupo in
-			 "ADM" | "VEN" | "SEC" | "CONT")
+			 "ADM" | "SAL" | "SEC" | "ACC")
 				add_user "$username" "$grupo"
-				read -p "pressione ENTER para continuar..."
+				read -p "press ENTER to continue..."
 				break
 				;;
-			"Cancelar")
-				echo "Cancelado!"
+			"cancel")
+				echo "canceled!"
 				break
 				;;
-			* ) 	echo "Opção Inválida!"
+			* ) 	echo "Invalid Option"
 		esac
 	  done
 
 }
-#----------------MENU PRINCIPAL-----------#
+
+
+
+## MAIN
 while true; do
     echo ""
-    echo "=== MENU PRINCIPAL ==="
-    select opt in "Criar Grupos" "Cadastrar Usuários" "Instalar Pacotes" "Sair"; do
+    echo "=== MENU ==="
+    select opt in "Create Group" "Register a New User" "Install Packages" "Finish"; do
         case $opt in
-            "Criar Grupos")    menu_grp  ;;
-            "Cadastrar Usuários") menu_user  ;;
-	    "Instalar Pacotes") menu_app1 ;;
-            "Sair")           exit 0 ;;
-            *)                echo "Opção inválida!" ;;
+            "Create Group")    menu_grp  ;;
+            "Register a New User") menu_user  ;;
+	    "Install Packages") menu_app1 ;;
+            "Finish")           exit 0 ;;
+            *)                echo "Invalid Option!" ;;
         esac
 	break
     done
