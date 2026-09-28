@@ -77,7 +77,7 @@ echo "Select the system to be added: "
 select opt in "Apache" "MySql" "Done" ; do
 	case $opt in
 	"Apache") inst_apache ; menu_app1 ;;
-	"MySql") inst_mysql ; menu app_1 ;;
+	"MySql") inst_mysql ; menu_app1 ;;
 	"Done") break ;;
 	*  ) echo "Invalid option"
 	esac
@@ -100,7 +100,7 @@ menu_user(){
 				read -p "press ENTER to continue..."
 				break
 				;;
-			"cancel")
+			"CANCEL")
 				echo "canceled!"
 				break
 				;;
