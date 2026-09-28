@@ -48,11 +48,14 @@ grp_acc(){
 
 
 ##User
-add_user(){
-	useradd "$1" -m -G "GRP_$2" -s /bin/bash
-	echo "User $1 added in the group GRP_$2 "
+add_user() {
+    if useradd -m -G "GRP_$2" -s /bin/bash "$1"; then
+        echo "User $1 added in the group GRP_$2"
+    else
+        echo "Failed to create user $1" >&2
+        return 1
+    fi
 }
-
 
 
 ##Menus
@@ -60,10 +63,10 @@ menu_grp(){
 echo "Select the directory to be created:"
 select opt in "Administrative" "Security" "Sales" "Accounting" "Finish" ; do
 	case $opt in
-  	 "Administrative") grp_adm ;  menu_grp ;;
-	 "Security") grp_sec ; menu_grp ;;
-         "Sales") grp_sal ; menu_grp ;;
-         "Accounting") grp_acc ; menu_grp ;;
+  	 "Administrative") grp_adm;;
+	 "Security") grp_sec;;
+         "Sales") grp_sal;;
+         "Accounting") grp_acc;;
 	 "Finish") break ;;
   	 *) echo "Invalid Option" ;;
 	 esac
@@ -76,8 +79,8 @@ menu_app1(){
 echo "Select the system to be added: "
 select opt in "Apache" "MySql" "Done" ; do
 	case $opt in
-	"Apache") inst_apache ; menu_app1 ;;
-	"MySql") inst_mysql ; menu_app1 ;;
+	"Apache") inst_apache;;
+	"MySql") inst_mysql;;
 	"Done") break ;;
 	*  ) echo "Invalid option"
 	esac
